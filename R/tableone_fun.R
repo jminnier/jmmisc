@@ -1,14 +1,19 @@
 
 #' CreateTableOne_Strata
 #'
-#' @param vars
-#' @param strata
-#' @param data
-#' @param keep_test
-#' @param nonnormal
-#' @param ...
+#' An extension to tableone::CreateTableOne that makes a table of overall information,
+#' cbinded to a strata table with p-values, adding a column of number of non-missing
+#' values for each variable, returning the printed table (from print.TableOne) as a data frame
+#' with no rownames. Column names include strata name.
 #'
-#' @return
+#' @param vars Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.
+#' @param strata Stratifying (grouping) variable name(s) given as a character vector.
+#' @param data A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.
+#' @param keep_test binary: keep the column "test"
+#' @param nonnormal A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).
+#' @param ... need to add this: other arguments to ?
+#'
+#' @return a tibble
 #' @export
 #'
 #' @examples
