@@ -12,12 +12,12 @@ Imports:
     ggplot2,
     janitor,
     knitr,
+    magrittr,
     purrr,
     readxl,
     tableone,
     tibble,
-    tidyr,
-    magrittr
+    tidyr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
 Suggests: 
