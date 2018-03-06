@@ -11,6 +11,7 @@
 #' @param data A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.
 #' @param keep_test binary: keep the column "test"
 #' @param nonnormal A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).
+#' @param exact A character vector to specify the variables for which the p-values should be those of exact tests. By default all p-values are from large sample approximation tests (chisq.test).
 #' @param ... need to add this: other arguments to ?
 #'
 #' @return a tibble
@@ -20,7 +21,7 @@
 #'
 #' mtcars2 = mtcars%>%mutate(gear=factor(gear),vs=factor(vs))
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
-CreateTableOne_Strata <- function(vars,strata,data,keep_test=FALSE,nonnormal=NULL,...) {
+CreateTableOne_Strata <- function(vars,strata,data,keep_test=FALSE,nonnormal=NULL,exact=NULL,...) {
   data_tbl1 = data[,c(strata,vars),drop=F]
   data_tbl1 = dplyr::as_data_frame(data_tbl1)
 
@@ -35,8 +36,8 @@ CreateTableOne_Strata <- function(vars,strata,data,keep_test=FALSE,nonnormal=NUL
                        "num_not_missing"=nummiss,stringsAsFactors = FALSE)
 
 
-  x0 <- print(t0,printToggle = FALSE,nonnormal=nonnormal)
-  x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal)
+  x0 <- print(t0,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
+  x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
 
   tmp0 = unlist(lapply(rownames(x0),function(k) strsplit(k,split=" ",fixed=TRUE)[[1]][1]))
   tmp = data.frame("rownames"=rownames(x0),"rownames1"=tmp0,stringsAsFactors = FALSE)

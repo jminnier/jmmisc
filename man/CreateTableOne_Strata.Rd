@@ -5,7 +5,7 @@
 \title{CreateTableOne_Strata}
 \usage{
 CreateTableOne_Strata(vars, strata, data, keep_test = FALSE,
-  nonnormal = NULL, ...)
+  nonnormal = NULL, exact = NULL, ...)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}
@@ -17,6 +17,8 @@ CreateTableOne_Strata(vars, strata, data, keep_test = FALSE,
 \item{keep_test}{binary: keep the column "test"}
 
 \item{nonnormal}{A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).}
+
+\item{exact}{A character vector to specify the variables for which the p-values should be those of exact tests. By default all p-values are from large sample approximation tests (chisq.test).}
 
 \item{...}{need to add this: other arguments to ?}
 }
