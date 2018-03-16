@@ -19,6 +19,7 @@ output:
 library(tidyverse)
 library(readxl)
 library(skimr)
+library(janitor)
 library(jmmisc)
 #### Global chunk options -----------------------------
 
@@ -35,7 +36,7 @@ knitr::opts_chunk$set(
   dpi        = 96, 
   fig.width  = 6,       # consistent width for figures
   fig.asp    = 0.618,   # the golden ratio, can be adjusted in individual chunks
-  out.width  = "70%",   # controls the output size
+  out.width  = "100%",   # controls the output size
   fig.align  = "center" # give plot room to breathe
 )
 ```
