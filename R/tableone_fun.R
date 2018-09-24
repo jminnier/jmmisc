@@ -7,7 +7,7 @@
 #' with no rownames. Column names include strata name.
 #'
 #' @param vars Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.
-#' @param strata Stratifying (grouping) variable name(s) given as a character vector.
+#' @param strata Stratifying (grouping) variable name(s) given as a character vector. default NULL when no grouping variable
 #' @param data A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.
 #' @param keep_test binary: keep the column "test"
 #' @param nonnormal A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).
@@ -21,42 +21,58 @@
 #'
 #' mtcars2 = mtcars%>%mutate(gear=factor(gear),vs=factor(vs))
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
-CreateTableOne_Strata <- function(vars,strata,data,keep_test=FALSE,nonnormal=NULL,exact=NULL,...) {
+#'
+#' CreateTableOne_Strata(vars=c("mpg","vs","gear"),data=mtcars2)
+#'
+CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnormal=NULL,exact=NULL,...) {
   data_tbl1 = data[,c(strata,vars),drop=F]
   data_tbl1 = dplyr::as_data_frame(data_tbl1)
 
-  strata_levels = levels(factor(data %>% dplyr::pull(!!strata)))
+  if(!is.null(strata)) strata_levels = levels(factor(data %>% dplyr::pull(!!strata)))
 
   t0 = tableone::CreateTableOne(colnames(data_tbl1)[-1],data=data_tbl1,includeNA=FALSE)
-  t1 = tableone::CreateTableOne(colnames(data_tbl1)[-1],data=data_tbl1,
-                      strata=strata,
-                      includeNA=FALSE)
   nummiss = apply(!is.na(data_tbl1[,t0$MetaData$vars]),2,sum)
   nummiss = data.frame("rownames1"=t0$MetaData$vars,
                        "num_not_missing"=nummiss,stringsAsFactors = FALSE)
 
 
   x0 <- print(t0,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
-  x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
 
   tmp0 = unlist(lapply(rownames(x0),function(k) strsplit(k,split=" ",fixed=TRUE)[[1]][1]))
   tmp = data.frame("rownames"=rownames(x0),"rownames1"=tmp0,stringsAsFactors = FALSE)
   tmp = dplyr::left_join(tmp,nummiss)
   tmp$num_not_missing[is.na(tmp$num_not_missing)] = ""
   tmp = tmp[,-2]
-
   x0 = data.frame(x0)
-  x1 = data.frame(x1)
+
+
+  if(!is.null(strata)) {
+    t1 = tableone::CreateTableOne(colnames(data_tbl1)[-1],data=data_tbl1,
+                                  strata=strata,
+                                  includeNA=FALSE)
+    x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
+    x1 = data.frame(x1)
+    tmpstrata <- paste(strata,"=",strata_levels,"P-value","Test")
+
+    if(!keep_test) {
+      x1 <- x1%>%dplyr::select(-test)
+      tmpcolnames <- tmpcolnames[-match(tmpcolnames,"Test")]
+    }
+
+  }else{
+    tmpstrata = c()
+  }
+
 
   tmpcolnames = c("Vars","Num Not Missing", "Overall",
-                  paste(strata,"=",strata_levels),
-                  "P-value","Test")
+                  tmpstrata)
 
-  if(!keep_test) {
-    x1 <- x1%>%dplyr::select(-test)
-    tmpcolnames <- tmpcolnames[-7]
+
+  if(!is.null(strata)) {
+    table1 <- cbind(tmp,x0,x1)
+  }else{
+    table1 <- cbind(tmp,x0)
   }
-  table1 <- cbind(tmp,x0,x1)
 
   colnames(table1) = tmpcolnames
   rownames(table1) = NULL

@@ -4,13 +4,13 @@
 \alias{CreateTableOne_Strata}
 \title{CreateTableOne_Strata}
 \usage{
-CreateTableOne_Strata(vars, strata, data, keep_test = FALSE,
+CreateTableOne_Strata(vars, strata = NULL, data, keep_test = FALSE,
   nonnormal = NULL, exact = NULL, ...)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}
 
-\item{strata}{Stratifying (grouping) variable name(s) given as a character vector.}
+\item{strata}{Stratifying (grouping) variable name(s) given as a character vector. default NULL when no grouping variable}
 
 \item{data}{A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.}
 
@@ -35,4 +35,7 @@ with no rownames. Column names include strata name.
 
 mtcars2 = mtcars\%>\%mutate(gear=factor(gear),vs=factor(vs))
 CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
+
+CreateTableOne_Strata(vars=c("mpg","vs","gear"),data=mtcars2)
+
 }
