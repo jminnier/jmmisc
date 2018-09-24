@@ -30,7 +30,7 @@ CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnorma
 
   if(!is.null(strata)) strata_levels = levels(factor(data %>% dplyr::pull(!!strata)))
 
-  t0 = tableone::CreateTableOne(colnames(data_tbl1)[-1],data=data_tbl1,includeNA=FALSE)
+  t0 = tableone::CreateTableOne(vars,data=data_tbl1,includeNA=FALSE)
   nummiss = apply(!is.na(data_tbl1[,t0$MetaData$vars]),2,sum)
   nummiss = data.frame("rownames1"=t0$MetaData$vars,
                        "num_not_missing"=nummiss,stringsAsFactors = FALSE)
