@@ -42,21 +42,22 @@ CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnorma
   tmp = data.frame("rownames"=rownames(x0),"rownames1"=tmp0,stringsAsFactors = FALSE)
   tmp = dplyr::left_join(tmp,nummiss)
   tmp$num_not_missing[is.na(tmp$num_not_missing)] = ""
-  tmp = tmp[,-2]
+  tmp = tmp[,-2,drop=FALSE]
   x0 = data.frame(x0)
 
 
   if(!is.null(strata)) {
-    t1 = tableone::CreateTableOne(colnames(data_tbl1)[-1],data=data_tbl1,
+    t1 = tableone::CreateTableOne(vars,
+                                  data=data_tbl1,
                                   strata=strata,
                                   includeNA=FALSE)
     x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
     x1 = data.frame(x1)
-    tmpstrata <- paste(strata,"=",strata_levels,"P-value","Test")
+    tmpstrata <- c(paste(strata,"=",strata_levels),"P-value","Test")
 
     if(!keep_test) {
       x1 <- x1%>%dplyr::select(-test)
-      tmpcolnames <- tmpcolnames[-match(tmpcolnames,"Test")]
+      tmpstrata <- tmpstrata[-which(tmpstrata=="Test")]
     }
 
   }else{
