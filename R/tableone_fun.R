@@ -12,15 +12,20 @@
 #' @param keep_test binary: keep the column "test"
 #' @param nonnormal A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).
 #' @param exact A character vector to specify the variables for which the p-values should be those of exact tests. By default all p-values are from large sample approximation tests (chisq.test).
-#' @param ... need to add this: other arguments to ?
+#' @param ... need to add this: other arguments to CreateTableOne
 #'
 #' @return a tibble
 #' @export
 #'
 #' @examples
 #'
-#' mtcars2 = mtcars%>%mutate(gear=factor(gear),vs=factor(vs))
+#' mtcars2 <- mtcars%>%mutate(gear=factor(gear),vs=factor(vs))
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
+#'
+#' # Paired t-test
+#' small_data <- mtcars2%>%group_by(vs)%>%slice(1:5L)
+#' CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,testNormal = t.test, argsNormal = list(paired=FALSE))
+#' CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,testNormal = t.test, argsNormal = list(paired=TRUE))
 #'
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),data=mtcars2)
 #'
@@ -50,7 +55,8 @@ CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnorma
     t1 = tableone::CreateTableOne(vars,
                                   data=data_tbl1,
                                   strata=strata,
-                                  includeNA=FALSE)
+                                  includeNA=FALSE,
+                                  ...)
     x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
     x1 = data.frame(x1)
     tmpstrata <- c(paste(strata,"=",strata_levels),"P-value","Test")
