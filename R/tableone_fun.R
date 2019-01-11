@@ -29,7 +29,13 @@
 #'
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),data=mtcars2)
 #'
-CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnormal=NULL,exact=NULL,...) {
+CreateTableOne_Strata <- function(vars,
+                                  strata=NULL,
+                                  data,
+                                  keep_test=FALSE,
+                                  smd=FALSE,
+                                  nonnormal=NULL,
+                                  exact=NULL,...) {
   data_tbl1 = data[,c(strata,vars),drop=F]
   data_tbl1 = dplyr::as_data_frame(data_tbl1)
 
@@ -57,13 +63,16 @@ CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnorma
                                   strata=strata,
                                   includeNA=FALSE,
                                   ...)
-    x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact)
-    x1 = data.frame(x1)
-    tmpstrata <- c(paste(strata,"=",strata_levels),"P-value","Test")
+    x1 <- print(t1,printToggle = FALSE,nonnormal=nonnormal,exact=exact, smd=smd)
+    x1 <- data.frame(x1)
+    tmpstrata <- c(paste(strata,"=",strata_levels),"P-value","Test", "SMD")
 
     if(!keep_test) {
       x1 <- x1%>%dplyr::select(-test)
       tmpstrata <- tmpstrata[-which(tmpstrata=="Test")]
+    }
+    if(!smd) {
+      tmpstrata <- tmpstrata[-which(tmpstrata=="SMD")]
     }
 
   }else{
@@ -84,7 +93,7 @@ CreateTableOne_Strata <- function(vars,strata=NULL,data,keep_test=FALSE,nonnorma
   colnames(table1) = tmpcolnames
   rownames(table1) = NULL
   table1$Vars = gsub("   ","___",table1$Vars)
-  dplyr::as_data_frame(table1)
+  dplyr::as_data_frame(table1) %>% mutate_if(is.factor,as.character)
 }
 
 
