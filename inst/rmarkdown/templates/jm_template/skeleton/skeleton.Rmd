@@ -18,8 +18,10 @@ output:
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(readxl)
-library(skimr)
 library(janitor)
+library(broom)
+library(knitr)
+library(kableExtra)
 library(jmmisc)
 #### Global chunk options -----------------------------
 
@@ -39,4 +41,5 @@ knitr::opts_chunk$set(
   out.width  = "100%",   # controls the output size
   fig.align  = "center" # give plot room to breathe
 )
+ggplot2::theme_set(theme_bw())
 ```
