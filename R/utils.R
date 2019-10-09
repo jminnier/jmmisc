@@ -11,7 +11,5 @@
 #' @importFrom dplyr %>%
 #' @usage lhs \%>\% rhs
 #' @examples
-#' mtcars %>%
-#'   tabyl(carb, cyl) %>%
-#'   adorn_totals()
+#' mtcars %>% head()
 NULL

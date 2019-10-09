@@ -19,13 +19,16 @@
 #'
 #' @examples
 #'
-#' mtcars2 <- mtcars%>%mutate(gear=factor(gear),vs=factor(vs))
+#' library(dplyr)
+#' mtcars2 <- mtcars %>% mutate(gear=factor(gear),vs=factor(vs))
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
 #'
 #' # Paired t-test
-#' small_data <- mtcars2%>%group_by(vs)%>%slice(1:5L)
-#' CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,testNormal = t.test, argsNormal = list(paired=FALSE))
-#' CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,testNormal = t.test, argsNormal = list(paired=TRUE))
+#' small_data <- mtcars2 %>% group_by(vs)%>%slice(1:5L)
+#' CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,
+#'     testNormal = t.test, argsNormal = list(paired=FALSE))
+#' CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,
+#'     testNormal = t.test, argsNormal = list(paired=TRUE))
 #'
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),data=mtcars2)
 #'

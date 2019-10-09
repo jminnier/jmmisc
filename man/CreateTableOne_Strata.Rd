@@ -5,7 +5,7 @@
 \title{CreateTableOne_Strata}
 \usage{
 CreateTableOne_Strata(vars, strata = NULL, data, keep_test = FALSE,
-  nonnormal = NULL, exact = NULL, ...)
+  smd = FALSE, nonnormal = NULL, exact = NULL, ...)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}
@@ -20,7 +20,7 @@ CreateTableOne_Strata(vars, strata = NULL, data, keep_test = FALSE,
 
 \item{exact}{A character vector to specify the variables for which the p-values should be those of exact tests. By default all p-values are from large sample approximation tests (chisq.test).}
 
-\item{...}{need to add this: other arguments to ?}
+\item{...}{need to add this: other arguments to CreateTableOne}
 }
 \value{
 a tibble
@@ -33,8 +33,16 @@ with no rownames. Column names include strata name.
 }
 \examples{
 
-mtcars2 = mtcars\%>\%mutate(gear=factor(gear),vs=factor(vs))
+library(dplyr)
+mtcars2 <- mtcars \%>\% mutate(gear=factor(gear),vs=factor(vs))
 CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
+
+# Paired t-test
+small_data <- mtcars2 \%>\% group_by(vs)\%>\%slice(1:5L)
+CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,
+    testNormal = t.test, argsNormal = list(paired=FALSE))
+CreateTableOne_Strata(vars=c("mpg"),strata="vs",data=small_data,
+    testNormal = t.test, argsNormal = list(paired=TRUE))
 
 CreateTableOne_Strata(vars=c("mpg","vs","gear"),data=mtcars2)
 
