@@ -9,7 +9,9 @@
 #' @param vars Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.
 #' @param strata Stratifying (grouping) variable name(s) given as a character vector. default NULL when no grouping variable
 #' @param data A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.
-#' @param keep_test binary: keep the column "test"
+#' @param keep_test logical: keep the column "test"
+#' @param smd logical: show standardized mean difference column
+#' @param pval logical: show p-value column
 #' @param nonnormal A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).
 #' @param exact A character vector to specify the variables for which the p-values should be those of exact tests. By default all p-values are from large sample approximation tests (chisq.test).
 #' @param ... need to add this: other arguments to CreateTableOne
@@ -22,6 +24,7 @@
 #' library(dplyr)
 #' mtcars2 <- mtcars %>% mutate(gear=factor(gear),vs=factor(vs))
 #' CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
+#' CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2, pval=FALSE, smd=TRUE)
 #'
 #' # Paired t-test
 #' small_data <- mtcars2 %>% group_by(vs)%>%slice(1:5L)
@@ -37,6 +40,7 @@ CreateTableOne_Strata <- function(vars,
                                   data,
                                   keep_test=FALSE,
                                   smd=FALSE,
+                                  pval=TRUE,
                                   nonnormal=NULL,
                                   exact=NULL,...) {
   data_tbl1 = data[,c(strata,vars),drop=F]
@@ -76,6 +80,10 @@ CreateTableOne_Strata <- function(vars,
     }
     if(!smd) {
       tmpstrata <- tmpstrata[-which(tmpstrata=="SMD")]
+    }
+    if(!pval) {
+      x1 <- x1%>%dplyr::select(-p)
+      tmpstrata <- tmpstrata[-which(tmpstrata=="P-value")]
     }
 
   }else{

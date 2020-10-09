@@ -4,8 +4,17 @@
 \alias{CreateTableOne_Strata}
 \title{CreateTableOne_Strata}
 \usage{
-CreateTableOne_Strata(vars, strata = NULL, data, keep_test = FALSE,
-  smd = FALSE, nonnormal = NULL, exact = NULL, ...)
+CreateTableOne_Strata(
+  vars,
+  strata = NULL,
+  data,
+  keep_test = FALSE,
+  smd = FALSE,
+  pval = TRUE,
+  nonnormal = NULL,
+  exact = NULL,
+  ...
+)
 }
 \arguments{
 \item{vars}{Variables to be summarized given as a character vector. Factors are handled as categorical variables, whereas numeric variables are handled as continuous variables. If empty, all variables in the data frame specified in the data argument are used.}
@@ -14,7 +23,11 @@ CreateTableOne_Strata(vars, strata = NULL, data, keep_test = FALSE,
 
 \item{data}{A data frame in which these variables exist. All variables (both vars and strata) must be in this data frame.}
 
-\item{keep_test}{binary: keep the column "test"}
+\item{keep_test}{logical: keep the column "test"}
+
+\item{smd}{logical: show standardized mean difference column}
+
+\item{pval}{logical: show p-value column}
 
 \item{nonnormal}{A character vector to specify the variables for which the p-values should be those of nonparametric tests. By default all p-values are from normal assumption-based tests (oneway.test).}
 
@@ -36,6 +49,7 @@ with no rownames. Column names include strata name.
 library(dplyr)
 mtcars2 <- mtcars \%>\% mutate(gear=factor(gear),vs=factor(vs))
 CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2)
+CreateTableOne_Strata(vars=c("mpg","vs","gear"),strata="cyl",data=mtcars2, pval=FALSE, smd=TRUE)
 
 # Paired t-test
 small_data <- mtcars2 \%>\% group_by(vs)\%>\%slice(1:5L)
